@@ -54,16 +54,31 @@ setupAddChat(bot)
 setupId(bot)
 setupDebug(bot)
 bot.on('message', async (ctx) => {
-  if (!ctx.chat || !ctx.chat.type || ctx.chat.type !== 'private' || !ctx.message || !ctx.message.forward_from_chat) {
+  if (
+    !ctx.chat ||
+    !ctx.chat.type ||
+    ctx.chat.type !== 'private' ||
+    !ctx.message ||
+    !ctx.message.forward_from_chat
+  ) {
     return
   }
   if (ctx.from.id !== 76104711) {
-    const chatMember = await ctx.telegram.getChatMember(ctx.message.forward_from_chat.id, ctx.from.id)
-    if (chatMember.status !== 'creator' && chatMember.status !== 'administrator') {
+    const chatMember = await ctx.telegram.getChatMember(
+      ctx.message.forward_from_chat.id,
+      ctx.from.id
+    )
+    if (
+      chatMember.status !== 'creator' &&
+      chatMember.status !== 'administrator'
+    ) {
       return
     }
   }
-  const raffle = await RaffleModel.findOne({ chatId: ctx.message.forward_from_chat.id, messageId: ctx.message.forward_from_message_id })
+  const raffle = await RaffleModel.findOne({
+    chatId: ctx.message.forward_from_chat.id,
+    messageId: ctx.message.forward_from_message_id,
+  })
   if (!raffle) {
     return
   }
@@ -72,7 +87,11 @@ bot.on('message', async (ctx) => {
     let succeeded = false
     while (numberOfTries < 100 && !succeeded) {
       try {
-        await finishRaffle(raffle, ctx, await findChat(ctx.message.forward_from_chat.id))
+        await finishRaffle(
+          raffle,
+          ctx,
+          await findChat(ctx.message.forward_from_chat.id)
+        )
         succeeded = true
       } catch (e) {
         console.log(e)
@@ -101,4 +120,8 @@ bot.catch(console.error)
 
 process.on('unhandledRejection', (reason) => {
   console.log('Unhandled Rejection at:', reason)
+})
+
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught exception:', err)
 })
