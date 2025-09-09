@@ -11,7 +11,7 @@ export function setupNodelete(bot: Telegraf<ContextMessageUpdate>) {
       return
     }
     // Get chat
-    let chat = await findChat(chatId)
+    const chat = await findChat(chatId)
     chat.nodelete = !chat.nodelete
     await chat.save()
     // Reply

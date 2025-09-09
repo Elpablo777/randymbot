@@ -30,7 +30,7 @@ export const RaffleModel = new Raffle().getModelForClass(Raffle)
  * @returns created raffle
  */
 export async function addRaffle(chatId: number) {
-  let raffle = new RaffleModel({ chatId })
+  const raffle = new RaffleModel({ chatId })
   return raffle.save()
 }
 

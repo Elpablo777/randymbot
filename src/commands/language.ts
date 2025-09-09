@@ -29,7 +29,7 @@ export function setupLanguage(bot: Telegraf<ContextMessageUpdate>) {
  * @param bot Bot to setup the callback
  */
 export function setupLanguageCallback(bot: Telegraf<ContextMessageUpdate>) {
-  ;(<any>bot).action(async (data: string, ctx: ContextMessageUpdate) => {
+  ; (<any>bot).action(async (data: string, ctx: ContextMessageUpdate) => {
     // Get language
     const datas = data.split('~')
     if (datas[0] !== 'l') return

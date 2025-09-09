@@ -2,8 +2,18 @@
 import * as dotenv from 'dotenv'
 dotenv.config({ path: `${__dirname}/../.env` })
 
+// Validate required environment variables
+const requiredEnvVars = ['TOKEN', 'USERNAME', 'MONGO']
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`💥 Missing required environment variable: ${envVar}`)
+    process.exit(1)
+  }
+}
+
 // Dependencies
 import { Telegraf, ContextMessageUpdate } from 'telegraf'
+import * as mongoose from 'mongoose'
 import { setupStartAndHelp } from './commands/startAndHelp'
 import { setupRandy } from './commands/randy'
 import { finishRaffle, setupCallback, setupListener } from './helpers/raffle'
@@ -63,7 +73,7 @@ bot.on('message', async (ctx) => {
   ) {
     return
   }
-  if (ctx.from.id !== 76104711) {
+  if (ctx.from.id !== parseInt(process.env.ADMIN || '0', 10)) {
     const chatMember = await ctx.telegram.getChatMember(
       ctx.message.forward_from_chat.id,
       ctx.from.id
@@ -94,7 +104,7 @@ bot.on('message', async (ctx) => {
         )
         succeeded = true
       } catch (e) {
-        console.log(e)
+        console.error(`⚠️ Raffle finish attempt ${numberOfTries + 1} failed:`, e)
         numberOfTries++
         if (numberOfTries === 100) {
           throw e
@@ -116,12 +126,29 @@ bot.on('message', async (ctx) => {
 setupLanguageCallback(bot)
 setupNumberCallback(bot)
 
-bot.catch(console.error)
+bot.catch((err: any) => {
+  console.error('💥 Telegram bot error:', err)
+})
 
 process.on('unhandledRejection', (reason) => {
-  console.log('Unhandled Rejection at:', reason)
+  console.error('💥 Unhandled Rejection at:', reason)
+  process.exit(1)
 })
 
 process.on('uncaughtException', (err) => {
   console.error('💥 Uncaught exception:', err)
+  process.exit(1)
+})
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully')
+  await mongoose.connection.close()
+  process.exit(0)
+})
+
+process.on('SIGINT', async () => {
+  console.log('🛑 SIGINT received, shutting down gracefully')
+  await mongoose.connection.close()
+  process.exit(0)
 })
