@@ -11,7 +11,7 @@ export function setupSubscribe(bot: Telegraf<ContextMessageUpdate>) {
       return
     }
     // Get chat
-    let chat = await findChat(chatId)
+    const chat = await findChat(chatId)
     // Check format
     const subscribeStringTemp = (ctx.message || ctx.channelPost).text
       .substr(11)

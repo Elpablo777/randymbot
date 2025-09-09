@@ -33,20 +33,20 @@ export async function checkIfAdmin(
           await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id)
         }
       } catch (err) {
-        // Do nothing
+        console.error('⚠️ Error deleting message from non-admin:', err)
       }
     }
     // Return result
     return isAdmin
   } catch (err) {
-    console.log(err)
+    console.error('⚠️ Error checking admin status:', err)
     // Delete message
     try {
       if (shouldDelete) {
         await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id)
       }
-    } catch (err) {
-      // Do nothing
+    } catch (deleteErr) {
+      console.error('⚠️ Error deleting message:', deleteErr)
     }
     // In case if something goes wrong
     return false

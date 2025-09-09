@@ -11,7 +11,7 @@ export function setupNosubscribe(bot: Telegraf<ContextMessageUpdate>) {
       return
     }
     // Get chat
-    let chat = await findChat(chatId)
+    const chat = await findChat(chatId)
     chat.subscribe = undefined
     await chat.save()
     // Reply

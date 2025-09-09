@@ -12,7 +12,7 @@ import { Chat, findChat } from '../models/chat'
 import { loc } from './locale'
 import { InstanceType } from 'typegoose'
 
-const promo = "<a href=\"https://t.me/+QcQ3ixtsDToxNWQx\">Join Lunchbreak!</a>"
+const promo = '<a href="https://t.me/+QcQ3ixtsDToxNWQx">Join Lunchbreak!</a>'
 
 /**
  * Starting a new raffle
@@ -77,12 +77,12 @@ export async function startRaffle(ctx: ContextMessageUpdate) {
  * @param bot Bot to setup the callback
  */
 export function setupCallback(bot: Telegraf<ContextMessageUpdate>) {
-  ;(<any>bot).action(async (data: string, ctx: ContextMessageUpdate) => {
+  ; (<any>bot).action(async (data: string, ctx: ContextMessageUpdate) => {
     // Get raffle
     const datas = data.split('~')
     if (['l', 'n', 'c'].indexOf(datas[0]) > -1) return
     const chatId = Number(datas[0])
-    let raffle = await getRaffleWithoutParticipantIds(chatId, datas[1])
+    const raffle = await getRaffleWithoutParticipantIds(chatId, datas[1])
     // Get chat
     const chat = await findChat(ctx.chat.id)
     // Check if raffle is there
